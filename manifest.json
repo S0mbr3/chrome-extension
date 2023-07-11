@@ -20,6 +20,14 @@
     "default_popup": "popup.html"
   },
   
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ],
+  
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -28,3 +36,4 @@
   
   "manifest_key": "value"
 }
+
