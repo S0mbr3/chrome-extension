@@ -1,31 +1,38 @@
 {
-  "manifest_version": 2,
-  "name": "HTTP Request Logger",
-  "version": "1.0",
-  "description": "A private Chrome Extension to intercept and log HTTP requests on a specific website.",
-  
-  "permissions": [
-    "webRequest",
-    "webRequestBlocking",
-    "storage",
-    "activeTab",
-    "<all_urls>"
-  ],
-  
-  "background": {
-    "service_worker": "service-worker.js"
-  },
-  
-  "browser_action": {
-    "default_popup": "popup.html"
-  },
-  
-  "icons": {
-    "16": "icons/icon16.png",
-    "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
-  },
-  
-  "manifest_key": "value"
+	"manifest_version": 3,
+	"name": "HTTP Request Logger",
+	"version": "1.0",
+	"description": "A private Chrome Extension to intercept and log HTTP requests on a specific website.",
+
+	"permissions": [
+		"scripting",
+		"storage",
+		"activeTab"
+	],
+
+	"action": {
+		"default_popup": "popup.html",
+		"default_icon": {
+			"16": "icons/icon16.png",
+			"48": "icons/icon48.png",
+			"128": "icons/icon128.png"
+		}
+	},
+
+	"host_permissions": [
+		"https://*.lepetitvapoteur.com/*"
+	],
+
+	"background": {
+		"service_worker": "service-worker.js",
+		"type": "module"
+	},
+
+	"icons": {
+		"16": "icons/icon16.png",
+		"48": "icons/icon48.png",
+		"128": "icons/icon128.png"
+	}
+
 }
 

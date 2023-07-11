@@ -1,91 +1,60 @@
-// Get references to UI elements
-const sessionNameInput = document.getElementById("session-name");
-const startCaptureButton = document.getElementById("start-capture");
-const stopCaptureButton = document.getElementById("stop-capture");
-const requestTable = document.getElementById("request-table");
+navigator.serviceWorker.register("service-worker.js");
 
-// Variable to store the captured requests
-let capturedRequests = [];
+document.addEventListener("DOMContentLoaded", () => {
+	const sessionNameInput = document.getElementById("session-name");
+	const startCaptureButton = document.getElementById("start-capture");
+	const stopCaptureButton = document.getElementById("stop-capture");
+	const requestTable = document.getElementById("request-table");
 
-// Function to update the UI with the captured requests
-function updateRequestTable() {
-	// Clear the table
-	requestTable.innerHTML = `
-	<tr>
-	      <th>Session Name</th>
-		    <th>Page Title</th>
-			  <th>Page URL</th>
-				<th>Request URL</th>
-				      <th>Endpoint Name</th>
-					    <th>Query Parameter Count</th>
-						  <th>Response Size (bytes)</th>
-							<th>Response Filename</th>
-							    </tr>`;
+	let capturing = false;
 
-	// Populate the table with captured requests
-	capturedRequests.forEach((request) => {
-		const row = document.createElement("tr");
-		row.innerHTML = `
-									      <td>${request.sessionName}</td>
-										    <td>${request.pageTitle}</td>
-											  <td>${request.pageUrl}</td>
-												<td>${request.requestUrl}</td>
-												      <td>${request.endpointName}</td>
-													    <td>${request.queryParameterCount}</td>
-														  <td>${request.responseSize}</td>
-															<td><a href="${request.responseFilename}" download>${request.responseFilename}</a></td>`;
-
-		requestTable.appendChild(row);
-	});
-}
-
-// Function to send messages to the background script
-function sendMessageToBackgroundScript(message, callback) {
-	chrome.runtime.sendMessage(message, (response) => {
-		if (callback && typeof callback === "function") {
-			callback(response);
-		}
-	});
-}
-
-// Function to handle the start capture button click
-function startCapture() {
-	const sessionName = sessionNameInput.value.trim();
-	if (sessionName === "") {
-		alert("Please enter a session name.");
-		return;
-	}
-
-	// Send message to the background script to start the capture
-	sendMessageToBackgroundScript({ action: "startCapture" }, (response) => {
-		if (response.success) {
-			// Clear previous captured requests
-			capturedRequests = [];
-			updateRequestTable();
-
-			// Disable start capture button and enable stop capture button
+	startCaptureButton.addEventListener("click", () => {
+		const sessionName = sessionNameInput.value.trim();
+		if (sessionName !== "") {
+			capturing = true;
 			startCaptureButton.disabled = true;
 			stopCaptureButton.disabled = false;
+			chrome.runtime.sendMessage({ action: "startCapture" });
 		}
 	});
-}
 
-// Function to handle the stop capture button click
-function stopCapture() {
-	// Send message to the background script to stop the capture
-	sendMessageToBackgroundScript({ action: "stopCapture" }, (response) => {
-		if (response.success) {
-			// Store the captured requests
-			capturedRequests = response.capturedRequests || [];
-			updateRequestTable();
+	stopCaptureButton.addEventListener("click", () => {
+		capturing = false;
+		startCaptureButton.disabled = false;
+		stopCaptureButton.disabled = true;
+		chrome.runtime.sendMessage({ action: "stopCapture" });
+	});
 
-			// Disable stop capture button and enable start capture button
-			stopCaptureButton.disabled = true;
-			startCaptureButton.disabled = false;
+	chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+		if (message.action === "capturedRequest") {
+			if (capturing) {
+				const capturedRequest = message.capturedRequest;
+				const row = requestTable.insertRow(-1);
+				const sessionNameCell = row.insertCell(0);
+				const pageTitleCell = row.insertCell(1);
+				const pageUrlCell = row.insertCell(2);
+				const requestUrlCell = row.insertCell(3);
+				const endpointNameCell = row.insertCell(4);
+				const queryParameterCountCell = row.insertCell(5);
+				const responseSizeCell = row.insertCell(6);
+				const responseFilenameCell = row.insertCell(7);
+
+				sessionNameCell.textContent = capturedRequest.sessionName;
+				pageTitleCell.textContent = capturedRequest.pageTitle;
+				pageUrlCell.textContent = capturedRequest.pageUrl;
+				requestUrlCell.textContent = capturedRequest.requestUrl;
+				endpointNameCell.textContent = capturedRequest.endpointName;
+				queryParameterCountCell.textContent = capturedRequest.queryParameterCount;
+				responseSizeCell.textContent = capturedRequest.responseSize;
+				responseFilenameCell.innerHTML = `<a href="#" class="response-filename">${capturedRequest.responseFilename}</a>`;
+
+				const responseFilenameLink = responseFilenameCell.querySelector(".response-filename");
+				responseFilenameLink.addEventListener("click", (event) => {
+					event.preventDefault();
+					chrome.runtime.sendMessage({ action: "downloadFile", filename: capturedRequest.responseFilename });
+				});
+			}
 		}
 	});
-}
+});
 
-// Add event listeners to the buttons
-startCaptureButton.addEventListener("click", startCapture);
-stopCaptureButton.addEventListener("click", stopCapture);
