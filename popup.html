@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>HTTP Request Logger</title>
+		<style>
+body {
+	width: 300px;
+	min-height: 200px;
+	padding: 10px;
+	font-family: Arial, sans-serif;
+}
+
+    h1 {
+	    font-size: 16px;
+	    margin-bottom: 10px;
+    }
+
+    input[type="text"] {
+	    width: 100%;
+	    margin-bottom: 10px;
+    }
+
+    button {
+	    padding: 6px 12px;
+	    background-color: #4CAF50;
+	    color: white;
+	    border: none;
+	    cursor: pointer;
+    }
+
+    table {
+	    width: 100%;
+	    border-collapse: collapse;
+	    margin-top: 10px;
+    }
+
+    table th, table td {
+	    padding: 8px;
+	    border-bottom: 1px solid #ddd;
+    }
+
+    table th {
+	    background-color: #4CAF50;
+	    color: white;
+	    text-align: left;
+    }
+
+    table tr:hover {
+	    background-color: #f2f2f2;
+    }
+		</style>
+		<script src="popup.js"></script>
+	</head>
+	<body>
+		<h1>HTTP Request Logger</h1>
+		<label for="session-name">Session Name:</label>
+		<input type="text" id="session-name" placeholder="Enter session name">
+		<button id="start-capture">Start Capture</button>
+		<button id="stop-capture" disabled>Stop Capture</button>
+		<table id="request-table">
+			<tr>
+				<th>Session Name</th>
+				<th>Page Title</th>
+				<th>Page URL</th>
+				<th>Request URL</th>
+				<th>Endpoint Name</th>
+				<th>Query Parameter Count</th>
+				<th>Response Size (bytes)</th>
+				<th>Response Filename</th>
+			</tr>
+		</table>
+	</body>
+</html>
