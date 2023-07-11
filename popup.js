@@ -14,7 +14,13 @@ document.addEventListener("DOMContentLoaded", () => {
 			capturing = true;
 			startCaptureButton.disabled = true;
 			stopCaptureButton.disabled = false;
-			chrome.runtime.sendMessage({ action: "startCapture" });
+
+			// Get the current tab's title and URL
+			chrome.tabs.query({active: true, currentWindow: true}, tabs => {
+				let pageTitle = tabs[0].title;
+				let pageUrl = tabs[0].url;
+				chrome.runtime.sendMessage({ action: "startCapture", sessionName: sessionName, pageTitle: pageTitle, pageUrl: pageUrl });
+				});
 		}
 	});
 
