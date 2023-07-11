@@ -8,7 +8,8 @@
 		"scripting",
 		"storage",
 		"activeTab",
-		"webRequest"
+		"webRequest",
+		"tabs"
 	],
 
 	"action": {

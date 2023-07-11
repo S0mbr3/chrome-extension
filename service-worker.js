@@ -123,7 +123,7 @@ async function handleRequest(request) {
 		endpointName: getEndpointName(request.url),
 		queryParameterCount: Object.keys(request.url.searchParams).length,
 		responseSize: response.headers.get("content-length") || "",
-		responseFilename: generateResponseFilename(capturedRequest);
+		responseFilename: generateResponseFilename(capturedRequest)
 	};
 
 	// Store captured request in IndexedDB
@@ -134,7 +134,6 @@ async function handleRequest(request) {
 
 // ... (previously defined code)
 
-let sessionName;
 
 self.addEventListener("message", (event) => {
 	if (event.data.action === "startCapture") {
